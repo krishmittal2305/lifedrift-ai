@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeDrift — Student Stress Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #040d0a;
+            --accent: #00ff88;
+            --accent2: #00c4ff;
+            --muted: #5a8070;
+            --font-header: 'Syne', sans-serif;
+            --font-accent: 'Instrument Serif', serif;
+            --font-body: 'DM Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--accent);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-header);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        i {
+            font-family: var(--font-accent);
+            font-style: italic;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+            border-bottom: 1px solid var(--muted);
+            padding-bottom: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ff0000;
+        }
+
+        .status-dot.online {
+            background-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            background: var(--muted);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 0 5px var(--accent);
+        }
+
+        #predictBtn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1rem;
+            font-family: var(--font-header);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        #predictBtn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        #predictBtn.loading {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .result-section {
+            border: 1px solid var(--muted);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            background: rgba(0, 255, 136, 0.02);
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+
+        .result-header {
+            font-size: 1.2rem;
+            color: var(--muted);
+        }
+
+        .stress-level {
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .confidence-bar-container {
+            width: 100%;
+            height: 8px;
+            background: var(--muted);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .confidence-text {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .history-panel {
+            margin-top: 4rem;
+            grid-column: span 2;
+        }
+
+        .history-title {
+            margin-bottom: 2rem;
+            color: var(--accent2);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .history-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            padding: 1rem;
+            border: 1px solid var(--muted);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            .history-panel {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">LIFEDRIFT <i>Intelligence</i></div>
+        <div class="status">
+            <div id="statusDot" class="status-dot"></div>
+            <span id="statusText">OFFLINE</span>
+        </div>
+    </nav>
+
+    <main>
+        <section class="form-section">
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>STUDY HOURS</span>
+                    <span id="studyVal">7.5</span>
+                </div>
+                <input type="range" id="study" min="5.0" max="10.0" step="0.1" value="7.5">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>EXTRACURRICULAR</span>
+                    <span id="extraVal">2.0</span>
+                </div>
+                <input type="range" id="extra" min="0.0" max="4.0" step="0.1" value="2.0">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>SLEEP HOURS</span>
+                    <span id="sleepVal">7.5</span>
+                </div>
+                <input type="range" id="sleep" min="5.0" max="10.0" step="0.1" value="7.5">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>SOCIAL HOURS</span>
+                    <span id="socialVal">2.5</span>
+                </div>
+                <input type="range" id="social" min="0.0" max="6.0" step="0.1" value="2.5">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>PHYSICAL ACTIVITY</span>
+                    <span id="physicalVal">4.0</span>
+                </div>
+                <input type="range" id="physical" min="0.0" max="13.0" step="0.1" value="4.0">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span>GPA</span>
+                    <span id="gpaVal">3.1</span>
+                </div>
+                <input type="range" id="gpa" min="2.24" max="4.0" step="0.01" value="3.1">
+            </div>
+
+            <button id="predictBtn">RUN PREDICTION</button>
+        </section>
+
+        <section class="result-section">
+            <div class="result-header">STRESS INTELLIGENCE REPORT</div>
+            <div id="stressLevel" class="stress-level">WAITING...</div>
+            
+            <div class="confidence-container">
+                <div class="confidence-bar-container">
+                    <div id="confidenceBar" class="confidence-bar"></div>
+                </div>
+                <div id="confidenceText" class="confidence-text">0% CONFIDENT</div>
+            </div>
+
+            <div id="topFeature" style="font-size: 0.8rem; color: var(--muted); text-align: center;"></div>
+        </section>
+
+        <section class="history-panel">
+            <h3 class="history-title">SESSION HISTORY</h3>
+            <div id="historyList" class="history-list">
+                <!-- History items will be injected here -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+
+        // Update slider values
+        const sliders = ['study', 'extra', 'sleep', 'social', 'physical', 'gpa'];
+        sliders.forEach(id => {
+            const input = document.getElementById(id);
+            const display = document.getElementById(id + 'Val');
+            input.oninput = () => display.innerText = input.value;
+        });
+
+        // Health Check
+        async function checkHealth() {
+            try {
+                const response = await fetch(API_BASE + '/health');
+                if (response.ok) {
+                    document.getElementById('statusDot').classList.add('online');
+                    document.getElementById('statusText').innerText = 'ONLINE';
+                }
+            } catch (err) {
+                console.error('API Offline');
+            }
+        }
+
+        // Prediction Function
+        async function runPrediction() {
+            const btn = document.getElementById('predictBtn');
+            const stressDisplay = document.getElementById('stressLevel');
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceText = document.getElementById('confidenceText');
+            const topFeatureDisplay = document.getElementById('topFeature');
+
+            btn.classList.add('loading');
+            btn.innerText = 'CALCULATING...';
+
+            const payload = {
+                study: parseFloat(document.getElementById('study').value),
+                extra: parseFloat(document.getElementById('extra').value),
+                sleep: parseFloat(document.getElementById('sleep').value),
+                social: parseFloat(document.getElementById('social').value),
+                physical: parseFloat(document.getElementById('physical').value),
+                gpa: parseFloat(document.getElementById('gpa').value)
+            };
+
+            try {
+                const response = await fetch(API_BASE + '/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('API Error');
+
+                const data = await response.json();
+                
+                // Update UI
+                stressDisplay.innerText = data.stress_level.toUpperCase();
+                stressDisplay.style.color = data.stress_level === 'High' ? '#ff4b4b' : (data.stress_level === 'Moderate' ? '#ffaa00' : '#00ff88');
+                
+                const confPercent = Math.round(data.confidence * 100);
+                confidenceBar.style.width = confPercent + '%';
+                confidenceText.innerText = confPercent + '% CONFIDENT';
+                
+                topFeatureDisplay.innerText = `TOP CONTRIBUTOR: ${data.top_feature.replace(/_/g, ' ').toUpperCase()}`;
+
+                // Cache to Session Storage
+                updateHistory(data.stress_level, confPercent);
+
+            } catch (err) {
+                stressDisplay.innerText = 'SERVICE UNAVAILABLE';
+                stressDisplay.style.color = '#ff4b4b';
+            } finally {
+                btn.classList.remove('loading');
+                btn.innerText = 'RUN PREDICTION';
+            }
+        }
+
+        function updateHistory(level, confidence) {
+            let history = JSON.parse(sessionStorage.getItem('lifedrift_history') || '[]');
+            history.unshift({ level, confidence, time: new Date().toLocaleTimeString() });
+            if (history.length > 20) history.pop();
+            sessionStorage.setItem('lifedrift_history', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = JSON.parse(sessionStorage.getItem('lifedrift_history') || '[]');
+            list.innerHTML = history.map(item => `
+                <div class="history-item">
+                    <span>${item.time}</span>
+                    <span style="font-weight: 700; color: ${item.level === 'High' ? '#ff4b4b' : (item.level === 'Moderate' ? '#ffaa00' : '#00ff88')}">${item.level.toUpperCase()}</span>
+                    <span>${item.confidence}% CONFIDENT</span>
+                    <span style="color: var(--muted)">SIMULATION</span>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('predictBtn').onclick = runPrediction;
+        window.onload = () => {
+            checkHealth();
+            renderHistory();
+        };
+    </script>
+</body>
+</html>

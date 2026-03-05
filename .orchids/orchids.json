@@ -1,0 +1,10 @@
+{
+  "projectId": "7c7d4c98-557a-4d85-8882-470555f6e999",
+  "createdAt": 1772609180394,
+  "startupCommands": [
+    "python backend.py",
+    "streamlit run app.py --server.port 8501 --server.address 0.0.0.0",
+    "cd lifedrift-os; npm install; npm run dev"
+  ],
+  "templateId": "any"
+}
