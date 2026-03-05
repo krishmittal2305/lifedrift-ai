@@ -2,11 +2,12 @@
 
 import { motion } from 'framer-motion'
 import type { FeatureImportance } from '@/lib/types'
+import type { SliderValues } from '@/store/useOSStore'
 import { MOOD_COLORS } from '@/lib/constants'
 
 interface Props {
   features: FeatureImportance[]
-  currentValues: Record<string, number>
+  currentValues: SliderValues
 }
 
 export function ImportanceBars({ features, currentValues }: Props) {
