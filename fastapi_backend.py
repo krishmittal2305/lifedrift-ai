@@ -9,7 +9,6 @@ import sqlite3
 from contextlib import asynccontextmanager
 import time
 
-# Pydantic Models
 class LifestyleInput(BaseModel):
     study: float = Field(..., ge=5.0, le=10.0)
     extra: float = Field(..., ge=0.0, le=4.0)
