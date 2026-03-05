@@ -3,14 +3,7 @@ import { create } from 'zustand'
 export type StressLevel = 'Low' | 'Moderate' | 'High'
 export type ModuleId = 'neural' | 'matrix' | 'radar' | 'chrono' | 'logs' | 'system'
 
-export interface SliderValues {
-  study: number       // 5.0 – 10.0
-  extra: number       // 0.0 – 4.0
-  sleep: number       // 5.0 – 10.0
-  social: number      // 0.0 – 6.0
-  physical: number    // 0.0 – 13.0
-  gpa: number         // 2.24 – 4.0
-}
+export type SliderValues = Record<string, number>
 
 export interface Prediction {
   id: string

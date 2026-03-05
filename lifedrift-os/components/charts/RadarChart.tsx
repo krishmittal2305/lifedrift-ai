@@ -1,10 +1,11 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { MOOD_COLORS, SLIDER_CONFIGS } from '@/lib/constants'
+import { SLIDER_CONFIGS } from '@/lib/constants'
+import { SliderValues } from '@/lib/types'
 
 interface Props {
-  values: Record<string, number>
+  values: SliderValues
   color: string
 }
 

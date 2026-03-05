@@ -1,4 +1,5 @@
 export type StressLevel = 'Low' | 'Moderate' | 'High'
+export type SliderValues = Record<string, number>
 export type ModuleId = 'neural' | 'matrix' | 'radar' | 'chrono' | 'logs' | 'system'
 
 export interface SliderConfig {
